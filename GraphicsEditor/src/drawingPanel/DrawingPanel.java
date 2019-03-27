@@ -46,8 +46,8 @@ public class DrawingPanel extends JPanel {
 		this.currentTool.setPoint(x, y);
 		this.drawShape();
 	}
-	private void continueDrawing() {
-		this.currentTool.addPoint(x, y);
+	private void continueDrawing(int x, int y) {
+		this.currentTool.addPoint(x,y);
 
 	}
 	
