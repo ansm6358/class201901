@@ -14,6 +14,9 @@ public class DrawingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
+	private enum EActionState {eReady, eCMCDrawing, ePDRDrawing}; //cmc를 n포인트 드로일으로 pdr을 two포인트 드로일으로 바꿔진행
+	private EActionState eActionState; //그리는 방식이 같은 것끼리 도형을 분리 ***이 때 무브와 드로잉은 구분해야한다.
+	
 	private MouseHandler mouseHandler;
 	
 	private Shape currentTool;
@@ -21,6 +24,8 @@ public class DrawingPanel extends JPanel {
 		this.currentTool = currentTool.getShape();
 	}
 	public DrawingPanel() {
+		this.eActionState = EActionState.eReady;
+		
 		this.setBackground(Color.WHITE);
 		
 		this.mouseHandler = new MouseHandler();
@@ -52,40 +57,61 @@ public class DrawingPanel extends JPanel {
 	}
 	
 	private void finishDrawing(int x, int y) {
-		this.drawShape();
-		this.currentTool.setPoint(x, y);
-		this.drawShape();
+//		this.drawShape();
+//		this.currentTool.setPoint(x, y);
+//		this.drawShape();
 	}
 
 	private class MouseHandler implements MouseListener, MouseMotionListener {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if(e.getClickCount() == 1) {
-				
+				mouse1Clicked(e);
 			} else if (e.getClickCount() == 2) {
-				
+				mouse2Clicked(e);
 			}
 		}
+		private void mouse2Clicked(MouseEvent e) {			
+		}
+		private void mouse1Clicked(MouseEvent e) {
+			if(eActionState == EActionState.eReady) {
+				initDrawing(e.getX(),e.getY());
+				eActionState = EActionState.eCMCDrawing;
+			} else if(eActionState == EActionState.eCMCDrawing) {
+				finishDrawing(e.getX(),e.getY()); 
+				eActionState = EActionState.eReady;
+			}
+		} 
 		@Override
-		public void mousePressed(MouseEvent e) {						
-			initDrawing(e.getX(),e.getY());
+		public void mouseMoved(MouseEvent e) {
+			if(eActionState == EActionState.eCMCDrawing) {
+			keepDrawing(e.getX(),e.getY()); 
+		}
+		}
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if(eActionState == EActionState.eReady) {
+				initDrawing(e.getX(),e.getY());
+				eActionState = EActionState.ePDRDrawing;
+			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			finishDrawing(e.getX(),e.getY()); 
+			if(eActionState == EActionState.ePDRDrawing) {
+				initDrawing(e.getX(),e.getY());
+				eActionState = EActionState.eReady;
+			}
 		}
 		
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			keepDrawing(e.getX(),e.getY()); 
-
+			if(eActionState == EActionState.ePDRDrawing) {
+				keepDrawing(e.getX(),e.getY()); 
+			}
 		}
 		
-		@Override
-		public void mouseMoved(MouseEvent e) {
-			
-		}
+		
 		
 		@Override
 		public void mouseEntered(MouseEvent e) {	
