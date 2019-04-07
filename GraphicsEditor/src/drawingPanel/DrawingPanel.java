@@ -36,7 +36,10 @@ public class DrawingPanel extends JPanel {
 		this.addMouseMotionListener(this.mouseHandler);
 		
 		this.shapeVector = new Vector<Shape>();
-		this.currentTool = EToolBar.rectangle.getShape(); //버튼 순서를 바꾸면 설렉트를 부르는데 버튼이 다른것이 눌려 있다
+
+	}
+	public void initialize() {
+		
 	}
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
@@ -51,6 +54,16 @@ public class DrawingPanel extends JPanel {
 		this.currentShape.draw(graphics);
 	}
 	
+	private boolean onShape(int x, int y) {
+		this.currentShape = null;
+		for(Shape shape: this.shapeVector) {
+			if(shape.contains(x, y)) {
+				this.currentShape = shape;
+				return true;
+			}
+		}
+		return false;
+	}
 	private void initDrawing(int x, int y) {
 		this.currentShape = this.currentTool.clone();
 		this.currentShape.setOrigin(x, y);
@@ -104,8 +117,13 @@ public class DrawingPanel extends JPanel {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if(eActionState == EActionState.eReady) {
+				if(onShape(e.getX(), e.getY())) {
+					initMoving(e.getX(), e.getY());
+					eActionState = EActionState.eMoving;
+				} else {
 				initDrawing(e.getX(),e.getY());
 				eActionState = EActionState.e2PDrawing;
+				}
 			}
 		}
 
@@ -135,6 +153,5 @@ public class DrawingPanel extends JPanel {
 		}
 		
 	}
-
 
 }

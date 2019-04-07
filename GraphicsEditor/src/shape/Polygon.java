@@ -1,38 +1,23 @@
 package shape;
 
-import java.awt.Graphics;
-
 public class Polygon extends Shape {
-	private final static int nMaxPoints = 20;
-	private int[] xPoints;
-	private int[] yPoints;
-	private int nPoints;
+	private java.awt.Polygon polygon;
+	
 	public Polygon() {
-		this.nPoints = 0;
-		this.xPoints = new int[nMaxPoints];
-		this.yPoints = new int[nMaxPoints];
-		
+		this.shape = new java.awt.Polygon();
+		this.polygon = (java.awt.Polygon)this.shape;
 	}
 	public void setOrigin(int x, int y) {
-		this.xPoints[this.nPoints] = x;
-		this.yPoints[this.nPoints] = y;
-		this.nPoints = this.nPoints +1;
-		
-		this.xPoints[this.nPoints] = x;
-		this.yPoints[this.nPoints] = y;
-		this.nPoints = this.nPoints +1;
+		this.polygon.addPoint(x, y);
+		this.polygon.addPoint(x, y);
 	}
 	public void setPoint(int x, int y) {
-		this.xPoints[this.nPoints-1] = x;
-		this.yPoints[this.nPoints-1] = y;
+
+		this.polygon.xpoints[this.polygon.npoints-1] = x;
+		this.polygon.ypoints[this.polygon.npoints-1] = y;
 	}
 	public void addPoint(int x, int y) {
-		this.xPoints[this.nPoints] = x;
-		this.yPoints[this.nPoints] = y;
-		this.nPoints = this.nPoints +1;
+		this.polygon.addPoint(x, y);
 		
-	}
-	public void draw(Graphics graphics) {		
-		graphics.drawPolygon(xPoints, yPoints, nPoints);
 	}
 }

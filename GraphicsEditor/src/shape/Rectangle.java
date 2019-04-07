@@ -1,9 +1,23 @@
 package shape;
 
-import java.awt.Graphics;
-
 public class Rectangle extends Shape {
-	public void draw(Graphics graphics) {
-		graphics.drawRect(x1, y1, x2-x1, y2-y1);
+	private java.awt.Rectangle rectangle; //렉시컬 스코프 상의 오류로 렉텐글의 주소를 적어줘야 한다.
+	
+	public Rectangle() {
+		super();
+		this.shape = new java.awt.Rectangle();
+		this.rectangle = (java.awt.Rectangle)this.shape;
 	}
+		
+	public void setOrigin(int x, int y) {
+		this.rectangle.setBounds(x,y,0,0);
+		
+	}
+	public void setPoint(int x, int y) {
+		this.rectangle.setSize(x-this.rectangle.x, y-this.rectangle.y);
+
+	}
+	public void addPoint(int x, int y) {
+	}
+	
 }
