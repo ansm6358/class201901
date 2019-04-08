@@ -1,6 +1,7 @@
 package drawingPanel;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -10,12 +11,13 @@ import javax.swing.JPanel;
 
 import global.Constants.EToolBar;
 import shape.Shape;
+import shape.Polygon;;
 
 public class DrawingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
-	private enum EActionState {eReady, e2PDrawing, eNPDrawing}; //cmc를 n포인트 드로일으로 pdr을 two포인트 드로일으로 바꿔진행 
+	private enum EActionState {eReady, e2PDrawing, eNPDrawing, eMoving, eResizing,eRotating}; //cmc를 n포인트 드로일으로 pdr을 two포인트 드로일으로 바꿔진행 
 	private EActionState eActionState; //그리는 방식이 같은 것끼리 도형을 분리 ***이 때 무브와 드로잉은 구분해야한다.	
 	private MouseHandler mouseHandler;
 	
@@ -29,6 +31,7 @@ public class DrawingPanel extends JPanel {
 	public DrawingPanel() {
 		this.eActionState = EActionState.eReady;
 		
+		this.setForeground(Color.black);
 		this.setBackground(Color.WHITE);
 		
 		this.mouseHandler = new MouseHandler();
@@ -42,16 +45,17 @@ public class DrawingPanel extends JPanel {
 		
 	}
 	public void paint(Graphics graphics) {
-		super.paint(graphics);
+		Graphics2D graphics2d = (Graphics2D)graphics;
+		super.paint(graphics2d);
 		
 		for(Shape shape: this.shapeVector) {		
-			shape.draw(graphics);
+			shape.draw(graphics2d);
 		}
 	}
 	private void drawShape() {		
-		Graphics graphics = this.getGraphics();
-		graphics.setXORMode(getBackground());
-		this.currentShape.draw(graphics);
+		Graphics2D graphics2d = (Graphics2D)this.getGraphics();
+		graphics2d.setXORMode(getBackground());
+		this.currentShape.draw(graphics2d);
 	}
 	
 	private boolean onShape(int x, int y) {
@@ -82,6 +86,20 @@ public class DrawingPanel extends JPanel {
 	
 	private void finishDrawing(int x, int y) {
 		this.shapeVector.add(this.currentShape);
+	}
+	private void initMoving(int x, int y) {
+		this.currentShape.initMoving(x, y);
+	}
+	
+	private void keepMoving(int x, int y) { 
+		this.drawShape();
+		this.currentShape.keepMoving(x, y);
+		this.drawShape();
+	}
+	
+	private void finishMoving(int x, int y) {
+		this.currentShape.finishMoving(x, y);
+		
 	}
 
 	private class MouseHandler implements MouseListener, MouseMotionListener {
@@ -121,8 +139,10 @@ public class DrawingPanel extends JPanel {
 					initMoving(e.getX(), e.getY());
 					eActionState = EActionState.eMoving;
 				} else {
-				initDrawing(e.getX(),e.getY());
-				eActionState = EActionState.e2PDrawing;
+					if(! (currentTool instanceof Polygon)) {
+					initDrawing(e.getX(),e.getY());
+					eActionState = EActionState.e2PDrawing;
+					}
 				}
 			}
 		}
@@ -132,6 +152,9 @@ public class DrawingPanel extends JPanel {
 			if(eActionState == EActionState.e2PDrawing) {
 				finishDrawing(e.getX(),e.getY());
 				eActionState = EActionState.eReady;
+			} else if(eActionState == EActionState.eMoving) {
+				finishMoving(e.getX(),e.getY()); 
+				eActionState = EActionState.eReady;
 			}
 		}
 		
@@ -139,6 +162,8 @@ public class DrawingPanel extends JPanel {
 		public void mouseDragged(MouseEvent e) {
 			if(eActionState == EActionState.e2PDrawing) {
 				keepDrawing(e.getX(),e.getY()); 
+			} else if(eActionState == EActionState.eMoving) {
+				keepMoving(e.getX(),e.getY()); 		
 			}
 		}
 		

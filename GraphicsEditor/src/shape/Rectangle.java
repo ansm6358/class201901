@@ -19,5 +19,17 @@ public class Rectangle extends Shape {
 	}
 	public void addPoint(int x, int y) {
 	}
-	
+
+	public void keepMoving(int x, int y) {
+		int dw = x - this.px;
+		int dh = y - this.py;
+		
+		this.rectangle.setLocation(this.rectangle.x+dw, this.rectangle.y+dh);
+		
+		this.px = x;
+		this.py = y;
+	}
+	public void finishMoving(int x, int y) {
+		
+	}
 }
