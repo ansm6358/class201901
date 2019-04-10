@@ -8,10 +8,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
 
-import drawingPanel.DrawingPanel;
+import drawingPanel.GDrawingPanel;
 import global.Constants.EToolBar;
 
-public class ToolBar extends JToolBar {
+public class GToolBar extends JToolBar {
 
 	//atribute
 	private static final long serialVersionUID = 1L;
@@ -20,11 +20,11 @@ public class ToolBar extends JToolBar {
 	private Vector<JRadioButton> buttons; 
 	
 	//associations
-	private DrawingPanel drawingPanel;
-	public void associate(DrawingPanel drawingPanel) {
+	private GDrawingPanel drawingPanel;
+	public void associate(GDrawingPanel drawingPanel) {
 		this.drawingPanel = drawingPanel;
 	}	
-	public ToolBar() {
+	public GToolBar() {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		
 		this.buttons = new Vector<JRadioButton>();

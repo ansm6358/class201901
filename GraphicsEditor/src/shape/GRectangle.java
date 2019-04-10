@@ -1,9 +1,9 @@
 package shape;
 
-public class Rectangle extends Shape {
+public class GRectangle extends GShape {
 	private java.awt.Rectangle rectangle; //렉시컬 스코프 상의 오류로 렉텐글의 주소를 적어줘야 한다.
 	
-	public Rectangle() {
+	public GRectangle() {
 		super();
 		this.shape = new java.awt.Rectangle();
 		this.rectangle = (java.awt.Rectangle)this.shape;

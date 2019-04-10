@@ -10,10 +10,11 @@ import java.util.Vector;
 import javax.swing.JPanel;
 
 import global.Constants.EToolBar;
-import shape.Shape;
-import shape.Polygon;;
+import shape.GShape;
+import shape.GShape.EOnState;
+import shape.GPolygon;;
 
-public class DrawingPanel extends JPanel {
+public class GDrawingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -21,14 +22,14 @@ public class DrawingPanel extends JPanel {
 	private EActionState eActionState; //그리는 방식이 같은 것끼리 도형을 분리 ***이 때 무브와 드로잉은 구분해야한다.	
 	private MouseHandler mouseHandler;
 	
-	private Vector<Shape> shapeVector;
-	private Shape currentShape;
+	private Vector<GShape> shapeVector;
+	private GShape currentShape;
 	
-	private Shape currentTool;
+	private GShape currentTool;
 	public void setCurrentTool(EToolBar currentTool) {
 		this.currentTool = currentTool.getShape();
 	}
-	public DrawingPanel() {
+	public GDrawingPanel() {
 		this.eActionState = EActionState.eReady;
 		
 		this.setForeground(Color.black);
@@ -38,9 +39,10 @@ public class DrawingPanel extends JPanel {
 		this.addMouseListener(this.mouseHandler);
 		this.addMouseMotionListener(this.mouseHandler);
 		
-		this.shapeVector = new Vector<Shape>();
+		this.shapeVector = new Vector<GShape>();
 
 	}
+	
 	public void initialize() {
 		
 	}
@@ -48,7 +50,7 @@ public class DrawingPanel extends JPanel {
 		Graphics2D graphics2d = (Graphics2D)graphics;
 		super.paint(graphics2d);
 		
-		for(Shape shape: this.shapeVector) {		
+		for(GShape shape: this.shapeVector) {		
 			shape.draw(graphics2d);
 		}
 	}
@@ -58,15 +60,19 @@ public class DrawingPanel extends JPanel {
 		this.currentShape.draw(graphics2d);
 	}
 	
-	private boolean onShape(int x, int y) {
+	private EOnState onShape(int x, int y) {
 		this.currentShape = null;
-		for(Shape shape: this.shapeVector) {
-			if(shape.contains(x, y)) {
+		for(GShape shape: this.shapeVector) {
+			EOnState eOnState = shape.onShape(x, y);
+			if(eOnState != null) {
 				this.currentShape = shape;
-				return true;
+				return eOnState;
 			}
 		}
-		return false;
+		return null;
+	}
+	private EActionState defineActionState(int x, int y) {
+		EOnState eOnState = onShape(x, y);
 	}
 	private void initDrawing(int x, int y) {
 		this.currentShape = this.currentTool.clone();
@@ -135,11 +141,12 @@ public class DrawingPanel extends JPanel {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			if(eActionState == EActionState.eReady) {
+				eActionState = defineActionState();
 				if(onShape(e.getX(), e.getY())) {
 					initMoving(e.getX(), e.getY());
 					eActionState = EActionState.eMoving;
 				} else {
-					if(! (currentTool instanceof Polygon)) {
+					if(!(currentTool instanceof GPolygon)) {
 					initDrawing(e.getX(),e.getY());
 					eActionState = EActionState.e2PDrawing;
 					}

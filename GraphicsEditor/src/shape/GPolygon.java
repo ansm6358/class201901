@@ -1,9 +1,10 @@
 package shape;
 
-public class Polygon extends Shape {
+public class GPolygon extends GShape {
 	private java.awt.Polygon polygon;
 	
-	public Polygon() {
+	public GPolygon() {
+		super();
 		this.shape = new java.awt.Polygon();
 		this.polygon = (java.awt.Polygon)this.shape;
 	}
@@ -17,7 +18,6 @@ public class Polygon extends Shape {
 	}
 	public void addPoint(int x, int y) {
 		this.polygon.addPoint(x, y);
-		
 	}
 
 	public void keepMoving(int x, int y) {

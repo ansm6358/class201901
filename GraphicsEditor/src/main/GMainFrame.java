@@ -3,20 +3,21 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
-import drawingPanel.DrawingPanel;
+import drawingPanel.GDrawingPanel;
 import global.Constants.EMainFrame;
-import menu.MenuBar;
-import toolbar.ToolBar;
+import menu.GMenuBar;
+import toolbar.GToolBar;
 
-public class MainFrame extends JFrame {
+
+public class GMainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	//component
-	private MenuBar menuBar;
-	private ToolBar toolBar;
-	private DrawingPanel drawingPanel;
+	private GMenuBar menuBar;
+	private GToolBar toolBar;
+	private GDrawingPanel drawingPanel;
 	
-	public MainFrame() { 
+	public GMainFrame() { 
 		// attributes = 속성, 값
 		this.setLocation(EMainFrame.x.getValue(), EMainFrame.y.getValue());
 		this.setSize(EMainFrame.w.getValue(), EMainFrame.h.getValue());
@@ -24,13 +25,13 @@ public class MainFrame extends JFrame {
 
 		this.setLayout(new BorderLayout());	
 		// component = 자식
-		this.menuBar = new MenuBar();
+		this.menuBar = new GMenuBar();
 		this.setJMenuBar(this.menuBar);
 
-		this.toolBar = new ToolBar();
+		this.toolBar = new GToolBar();
 		this.add(this.toolBar, BorderLayout.NORTH);
 		
-		this.drawingPanel = new DrawingPanel();
+		this.drawingPanel = new GDrawingPanel();
 		this.add(this.drawingPanel, BorderLayout.CENTER);	
 		
 		//associations

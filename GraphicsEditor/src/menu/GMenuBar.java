@@ -1,23 +1,23 @@
 package menu;
 import javax.swing.JMenuBar;
 
-import drawingPanel.DrawingPanel;
+import drawingPanel.GDrawingPanel;
 import global.Constants.EMenu;
 
-public class MenuBar extends JMenuBar {
+public class GMenuBar extends JMenuBar {
 	private static final long serialVersionUID = 1L;
 
 	//components
-	private FileMenu fileMenu;
+	private GFileMenu fileMenu;
 	
 	//associations
-	private DrawingPanel drawingPanel;
-	public void associate(DrawingPanel drawingPanel) {
+	private GDrawingPanel drawingPanel;
+	public void associate(GDrawingPanel drawingPanel) {
 		this.drawingPanel = drawingPanel;
 	}		
 	
-	public MenuBar() {
-		this.fileMenu = new FileMenu(EMenu.filemenu.getText());
+	public GMenuBar() {
+		this.fileMenu = new GFileMenu(EMenu.filemenu.getText());
 		this.add(this.fileMenu);
 	}
 
