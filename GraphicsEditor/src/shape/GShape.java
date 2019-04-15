@@ -22,7 +22,7 @@ public abstract class GShape implements Cloneable {
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 		if(this.selected)
-		this.anchors.setoundingRect(this.shape.getBounds());
+		this.anchors.setBoundingRect(this.shape.getBounds());
 		}
 
 	public GShape() {

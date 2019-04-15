@@ -41,7 +41,7 @@ public class GAnchors {
 		}
 	}
 
-	public void setoundingRect(Rectangle r) {
+	public void setBoundingRect(Rectangle r) {
 		for (EAnchors eAnchors : EAnchors.values()) {
 			int x = 0, y = 0;
 			switch (eAnchors) {
