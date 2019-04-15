@@ -36,9 +36,12 @@ public abstract class GShape implements Cloneable {
 
 	abstract public void addPoint(int x, int y);
 
-	public void initMoving(int x, int y) {
+	public void initMoving(Graphics2D graphics2d, int x, int y) {
 		this.px = x;
 		this.py = y;
+		this.selected = true;
+		this.anchors.setBoundingRect(this.shape.getBounds());
+		this.anchors.draw(graphics2d);
 	}
 
 	public abstract void keepMoving(int x, int y);
@@ -58,6 +61,10 @@ public abstract class GShape implements Cloneable {
 
 	public void draw(Graphics2D graphics2d) {
 		graphics2d.draw(this.shape);
+		if(this.selected) {
+			this.anchors.setBoundingRect(this.shape.getBounds());
+			this.anchors.draw(graphics2d);
+		}
 	}
 
 	public EOnState onShape(int x, int y) {
