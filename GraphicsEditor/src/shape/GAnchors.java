@@ -7,8 +7,8 @@ import java.awt.geom.Ellipse2D;
 import java.util.Vector;
 
 public class GAnchors {
-	private final int w = 20;
-	private final int h = 20;
+	private final int w = 10;
+	private final int h = 10;
 	private final int dw = w / 2;
 	private final int dh = h / 2;
 

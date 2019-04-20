@@ -125,11 +125,11 @@ public class GDrawingPanel extends JPanel {
 	}
 
 	private void initMoving(int x, int y) {
-//		this.currentShape.setSelected(true);
+		// this.currentShape.setSelected(true);
 		Graphics2D graphics2d = (Graphics2D) this.getGraphics();
 		graphics2d.setXORMode(getBackground());
 		this.currentShape.initMoving(graphics2d, x, y);
-			
+
 	}
 
 	private void keepMoving(int x, int y) {
@@ -145,7 +145,37 @@ public class GDrawingPanel extends JPanel {
 
 	}
 
-	private class MouseHandler implements MouseListener, MouseMotionListener {
+	private void initResizing(int x, int y) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void initRotating(int x, int y) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void keepResizing(int x, int y) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void keepRotating(int x, int y) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void finishResizing(int x, int y) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void finishRotating(int x, int y) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private class MouseHandler implements MouseListener, MouseMotionListener { //state transition mapping
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e.getClickCount() == 1) {
@@ -199,8 +229,10 @@ public class GDrawingPanel extends JPanel {
 				} else if (eActionState == EActionState.eMoving) { // 앵커는 없는데 밑에 그림이 있는 경우
 					initMoving(e.getX(), e.getY());
 				} else if (eActionState == EActionState.eResizing) {
+					initResizing(e.getX(), e.getY());
 
 				} else if (eActionState == EActionState.eRotating) {
+					initRotating(e.getX(), e.getY());
 
 				}
 			}
@@ -217,7 +249,15 @@ public class GDrawingPanel extends JPanel {
 				finishMoving(e.getX(), e.getY());
 				eActionState = EActionState.eReady;
 			} else if (eActionState == EActionState.eResizing) {
+				finishResizing(e.getX(), e.getY());
+
+				eActionState = EActionState.eReady;
+
 			} else if (eActionState == EActionState.eRotating) {
+				finishRotating(e.getX(), e.getY());
+
+				eActionState = EActionState.eReady;
+
 			}
 		}
 
@@ -230,7 +270,9 @@ public class GDrawingPanel extends JPanel {
 			} else if (eActionState == EActionState.eMoving) {
 				keepMoving(e.getX(), e.getY());
 			} else if (eActionState == EActionState.eResizing) {
+				keepResizing(e.getX(), e.getY());
 			} else if (eActionState == EActionState.eRotating) {
+				keepRotating(e.getX(), e.getY());
 			}
 		}
 

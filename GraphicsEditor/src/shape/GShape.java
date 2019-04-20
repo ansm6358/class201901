@@ -7,7 +7,9 @@ import shape.GAnchors.EAnchors;
 
 public abstract class GShape implements Cloneable {
 
-	public enum EOnState {eOnShape, eOnResize, eOnRotate}; 
+	public enum EOnState {
+		eOnShape, eOnResize, eOnRotate
+	};
 
 	protected java.awt.Shape shape;
 	protected int px;
@@ -21,9 +23,9 @@ public abstract class GShape implements Cloneable {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
-		if(this.selected)
-		this.anchors.setBoundingRect(this.shape.getBounds());
-		}
+		if (this.selected)
+			this.anchors.setBoundingRect(this.shape.getBounds());
+	}
 
 	public GShape() {
 		this.selected = false;
@@ -39,9 +41,11 @@ public abstract class GShape implements Cloneable {
 	public void initMoving(Graphics2D graphics2d, int x, int y) {
 		this.px = x;
 		this.py = y;
-		this.selected = true;
-		this.anchors.setBoundingRect(this.shape.getBounds());
-		this.anchors.draw(graphics2d);
+		if (!this.selected) {
+			this.selected = true;
+			this.anchors.setBoundingRect(this.shape.getBounds());
+			this.anchors.draw(graphics2d);
+		}
 	}
 
 	public abstract void keepMoving(int x, int y);
@@ -61,26 +65,26 @@ public abstract class GShape implements Cloneable {
 
 	public void draw(Graphics2D graphics2d) {
 		graphics2d.draw(this.shape);
-		if(this.selected) {
+		if (this.selected) {
 			this.anchors.setBoundingRect(this.shape.getBounds());
 			this.anchors.draw(graphics2d);
 		}
 	}
 
 	public EOnState onShape(int x, int y) {
-		if(this.selected) {
+		if (this.selected) {
 			EAnchors eAnchor = this.anchors.onShape(x, y);
-			if(eAnchor == EAnchors.RR) { //rotate
+			if (eAnchor == EAnchors.RR) { // rotate
 				return EOnState.eOnRotate;
 			} else if (eAnchor == null) { //
-				if(this.shape.contains(x, y)) {
+				if (this.shape.contains(x, y)) {
 					return EOnState.eOnShape;
 				}
-			} else { //resize
+			} else { // resize
 				return EOnState.eOnResize;
 			}
 		} else {
-			if(this.shape.contains(x, y)) {
+			if (this.shape.contains(x, y)) {
 				return EOnState.eOnShape;
 			}
 		}
