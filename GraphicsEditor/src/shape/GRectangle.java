@@ -1,5 +1,7 @@
 package shape;
 
+import java.awt.Graphics2D;
+
 public class GRectangle extends GShape {
 	private java.awt.Rectangle rectangle; //렉시컬 스코프 상의 오류로 렉텐글의 주소를 적어줘야 한다.
 	
@@ -20,7 +22,7 @@ public class GRectangle extends GShape {
 	public void addPoint(int x, int y) {
 	}
 
-	public void keepMoving(int x, int y) {
+	public void keepMoving(Graphics2D graphics2d, int x, int y) {
 		int dw = x - this.px;
 		int dh = y - this.py;
 		
@@ -29,7 +31,7 @@ public class GRectangle extends GShape {
 		this.px = x;
 		this.py = y;
 	}
-	public void finishMoving(int x, int y) {
+	public void finishMoving(Graphics2D graphics2d, int x, int y) {
 		
 	}
 }

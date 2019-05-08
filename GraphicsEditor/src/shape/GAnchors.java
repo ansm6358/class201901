@@ -1,5 +1,6 @@
 package shape;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -37,7 +38,7 @@ public class GAnchors {
 
 	public void draw(Graphics2D graphics2D) {
 		for (Shape shape : this.anchors) {
-			graphics2D.draw(shape);
+			graphics2D.draw(shape);	
 		}
 	}
 

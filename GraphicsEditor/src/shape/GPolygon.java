@@ -1,5 +1,7 @@
 package shape;
 
+import java.awt.Graphics2D;
+
 public class GPolygon extends GShape {
 	private java.awt.Polygon polygon;
 	
@@ -20,7 +22,7 @@ public class GPolygon extends GShape {
 		this.polygon.addPoint(x, y);
 	}
 
-	public void keepMoving(int x, int y) {
+	public void keepMoving(Graphics2D graphics2d, int x, int y) {
 		int dw = x - this.px;
 		int dh = y - this.py;
 		this.polygon.translate(dw, dh);
@@ -28,7 +30,7 @@ public class GPolygon extends GShape {
 		this.px = x;
 		this.py = y;
 	}
-	public void finishMoving(int x, int y) {
+	public void finishMoving(Graphics2D graphics2d, int x, int y) {
 		
 		
 	}

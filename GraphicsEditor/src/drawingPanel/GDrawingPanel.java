@@ -13,28 +13,32 @@ import javax.swing.JPanel;
 import global.Constants.EToolBar;
 import shape.GShape;
 import shape.GShape.EOnState;
+import transformer.GDrawer;
+import transformer.GMover;
+import transformer.GResizer;
+import transformer.GRotator;
+import transformer.GTransformer;
 import shape.GPolygon;;
 
 public class GDrawingPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private enum EActionState {
-		eReady, eDrawing, eNPDrawing2, eMoving, eResizing, eRotating
-	}; // cmc를 n포인트 드로일으로 pdr을 two포인트 드로일으로 바꿔진행
+	private enum EActionState {eReady, eTransforming}; // cmc를 n포인트 드로일으로 pdr을 two포인트 드로일으로 바꿔진행
 
 	private EActionState eActionState; // 그리는 방식이 같은 것끼리 도형을 분리 ***이 때 무브와 드로잉은 구분해야한다.
 	private MouseHandler mouseHandler;
 
 	private Vector<GShape> shapeVector;
 	private GShape currentShape;
-
+	private GTransformer transformer;
+	
 	private GShape currentTool;
 
 	public void setCurrentTool(EToolBar currentTool) {
 		this.currentTool = currentTool.getShape();
 	}
-
+	
 	public GDrawingPanel() {
 		this.eActionState = EActionState.eReady;
 
@@ -46,7 +50,7 @@ public class GDrawingPanel extends JPanel {
 		this.addMouseMotionListener(this.mouseHandler);
 
 		this.shapeVector = new Vector<GShape>();
-
+		this.transformer = null;
 	}
 
 	public void initialize() {
@@ -80,20 +84,20 @@ public class GDrawingPanel extends JPanel {
 		return null;
 	}
 
-	private void defineActionState(int x, int y) {
+	private void defineActionState(int x, int y) {		
 		EOnState eOnState = onShape(x, y);
 		if (eOnState == null) {
-			eActionState = EActionState.eDrawing; // this: 사이드 이펙트로 통신해서 이 지역 변수와 통신 return은 그 자리에서만 사용하라는 것
+			this.transformer = new GDrawer();
 		} else {
 			switch (eOnState) {
 			case eOnShape:
-				this.eActionState = EActionState.eMoving;
+				this.transformer = new GMover();
 				break;
 			case eOnResize:
-				this.eActionState = EActionState.eResizing;
+				this.transformer = new GResizer();
 				break;
 			case eOnRotate:
-				this.eActionState = EActionState.eRotating;
+				this.transformer = new GRotator();
 				break;
 			default:
 				// exception
@@ -103,76 +107,25 @@ public class GDrawingPanel extends JPanel {
 		}
 	}
 
-	private void initDrawing(int x, int y) {
-		this.currentShape = this.currentTool.clone();
-		this.currentShape.setOrigin(x, y);
-		this.drawShape();
+	private void initTransforming(int x, int y) {
+		if(this.transformer instanceof GDrawer) {
+			this.currentShape = this.currentTool.clone();
+		}
+		this.transformer.setgShape(this.currentShape);
+		this.transformer.initTransforming((Graphics2D)this.getGraphics(), x, y);
 	}
 
-	private void keepDrawing(int x, int y) {
-		this.drawShape();
-		this.currentShape.setPoint(x, y);
-		this.drawShape();
+	private void keepTransforming(int x, int y) {
+		Graphics2D graphics2D = (Graphics2D) this.getGraphics();
+		graphics2D.setXORMode(this.getBackground());
+		this.transformer.keepTransforming(graphics2D, x, y);
 	}
 
-	private void continueDrawing(int x, int y) {
-		this.currentShape.addPoint(x, y);
-
-	}
-
-	private void finishDrawing(int x, int y) {
-		this.shapeVector.add(this.currentShape);
-	}
-
-	private void initMoving(int x, int y) {
-		// this.currentShape.setSelected(true);
-		Graphics2D graphics2d = (Graphics2D) this.getGraphics();
-		graphics2d.setXORMode(getBackground());
-		this.currentShape.initMoving(graphics2d, x, y);
-
-	}
-
-	private void keepMoving(int x, int y) {
-		Graphics2D graphics2d = (Graphics2D) this.getGraphics();
-		graphics2d.setXORMode(getBackground());
-		this.currentShape.draw(graphics2d);
-		this.currentShape.keepMoving(x, y);
-		this.currentShape.draw(graphics2d);
-	}
-
-	private void finishMoving(int x, int y) {
-		this.currentShape.finishMoving(x, y);
-
-	}
-
-	private void initResizing(int x, int y) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void initRotating(int x, int y) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void keepResizing(int x, int y) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void keepRotating(int x, int y) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void finishResizing(int x, int y) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void finishRotating(int x, int y) {
-		// TODO Auto-generated method stub
-
+	private void finishTransforming(int x, int y) {
+		this.transformer.finishTransforming((Graphics2D)this.getGraphics(), x, y);	
+		if(this.transformer instanceof GDrawer) {
+			this.shapeVector.add(this.currentShape);
+		}
 	}
 
 	private class MouseHandler implements MouseListener, MouseMotionListener { //state transition mapping
@@ -186,9 +139,8 @@ public class GDrawingPanel extends JPanel {
 		}
 
 		private void mouse2Clicked(MouseEvent e) {
-			if (eActionState == EActionState.eDrawing) {
+			if (eActionState == EActionState.eTransforming) {
 				if (currentTool instanceof GPolygon) {
-					finishDrawing(e.getX(), e.getY());
 					eActionState = EActionState.eReady;
 				}
 			}
@@ -197,21 +149,18 @@ public class GDrawingPanel extends JPanel {
 		private void mouse1Clicked(MouseEvent e) {
 			if (eActionState == EActionState.eReady) {
 				if (currentTool instanceof GPolygon) {
-					initDrawing(e.getX(), e.getY());
-					eActionState = EActionState.eDrawing;
+					
 				}
-			} else if (eActionState == EActionState.eDrawing) {
+			} else if (eActionState == EActionState.eTransforming) {
 				if (currentTool instanceof GPolygon) {
-					continueDrawing(e.getX(), e.getY());
 				}
 			}
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			if (eActionState == EActionState.eDrawing) {
+			if (eActionState == EActionState.eTransforming) {
 				if (currentTool instanceof GPolygon) {
-					keepDrawing(e.getX(), e.getY());
 				}
 			}
 		}
@@ -220,42 +169,15 @@ public class GDrawingPanel extends JPanel {
 		public void mousePressed(MouseEvent e) {
 			if (eActionState == EActionState.eReady) {
 				defineActionState(e.getX(), e.getY());
-				if (eActionState == EActionState.eDrawing) {
-					if (!(currentTool instanceof GPolygon)) {
-						initDrawing(e.getX(), e.getY());
-					} else {
-						eActionState = EActionState.eReady;
-					}
-				} else if (eActionState == EActionState.eMoving) { // 앵커는 없는데 밑에 그림이 있는 경우
-					initMoving(e.getX(), e.getY());
-				} else if (eActionState == EActionState.eResizing) {
-					initResizing(e.getX(), e.getY());
-
-				} else if (eActionState == EActionState.eRotating) {
-					initRotating(e.getX(), e.getY());
-
-				}
+				initTransforming(e.getX(), e.getY());
+				eActionState = EActionState.eTransforming;
 			}
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (eActionState == EActionState.eDrawing) {
-				if (!(currentTool instanceof GPolygon)) {
-					finishDrawing(e.getX(), e.getY());
-					eActionState = EActionState.eReady;
-				}
-			} else if (eActionState == EActionState.eMoving) {
-				finishMoving(e.getX(), e.getY());
-				eActionState = EActionState.eReady;
-			} else if (eActionState == EActionState.eResizing) {
-				finishResizing(e.getX(), e.getY());
-
-				eActionState = EActionState.eReady;
-
-			} else if (eActionState == EActionState.eRotating) {
-				finishRotating(e.getX(), e.getY());
-
+			if (eActionState == EActionState.eTransforming) {
+				finishTransforming(e.getX(), e.getY());
 				eActionState = EActionState.eReady;
 
 			}
@@ -263,16 +185,8 @@ public class GDrawingPanel extends JPanel {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (eActionState == EActionState.eDrawing) {
-				if (!(currentTool instanceof GPolygon)) {
-					keepDrawing(e.getX(), e.getY());
-				}
-			} else if (eActionState == EActionState.eMoving) {
-				keepMoving(e.getX(), e.getY());
-			} else if (eActionState == EActionState.eResizing) {
-				keepResizing(e.getX(), e.getY());
-			} else if (eActionState == EActionState.eRotating) {
-				keepRotating(e.getX(), e.getY());
+			if (eActionState == EActionState.eTransforming) {
+				keepTransforming(e.getX(), e.getY());
 			}
 		}
 

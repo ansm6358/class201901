@@ -48,9 +48,9 @@ public abstract class GShape implements Cloneable {
 		}
 	}
 
-	public abstract void keepMoving(int x, int y);
+	public abstract void keepMoving(Graphics2D graphics2d, int x, int y);
 
-	public abstract void finishMoving(int x, int y);
+	public abstract void finishMoving(Graphics2D graphics2d, int x, int y);
 
 	public GShape clone() {
 		try {
