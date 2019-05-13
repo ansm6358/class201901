@@ -51,15 +51,23 @@ public class Constants {
 		}
 	}
 	public enum EFileMenu {
-		newItem("새로만들기"),
-		openItem("open"),
+		newItem("새로만들기", "nnew"),
+		openItem("열기", "open"),
+		saveItem("저장", "save"),
+		saveAsItem("다른이름으로", "saveAs"),
+		closeItem("닫기", "close"),
 		;
 		private String text;
-		private EFileMenu (String text) {
+		private String method;
+		private EFileMenu (String text, String method) {
 			this.text = text;
+			this.method = method;
 		}
 		public String getText() {
 			return this.text;
+		}
+		public String getMethod() {
+			return this.method;
 		}
 	}
 
