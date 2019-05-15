@@ -30,6 +30,12 @@ public class GDrawingPanel extends JPanel {
 	private MouseHandler mouseHandler;
 
 	private Vector<GShape> shapeVector;
+	public Vector<GShape> getShapeVector() { return this.shapeVector;}
+	public void setShapeVector(Object shapeVector) {
+		this.shapeVector = (Vector<GShape>) shapeVector;
+		this.repaint();
+	}
+	
 	private GShape currentShape;
 	private GTransformer transformer;
 	
@@ -199,5 +205,7 @@ public class GDrawingPanel extends JPanel {
 		}
 
 	}
+
+	
 
 }

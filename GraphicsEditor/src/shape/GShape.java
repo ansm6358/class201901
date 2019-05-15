@@ -2,21 +2,24 @@ package shape;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.io.Serializable;
 
 import shape.GAnchors.EAnchors;
 
-public abstract class GShape implements Cloneable {
+public abstract class GShape implements Cloneable, Serializable {
+	private static final long serialVersionUID = 1L;
 
 	public enum EOnState {
 		eOnShape, eOnResize, eOnRotate
 	};
 
-	protected java.awt.Shape shape;
+	protected Shape shape;
 	protected int px;
-	protected int py;
-	private boolean selected;
+	protected int py;	
 	private GAnchors anchors;
-
+	
+	private boolean selected;
 	public boolean isSelected() {
 		return selected;
 	}
