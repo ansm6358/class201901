@@ -22,32 +22,44 @@ import shape.GPolygon;;
 
 public class GDrawingPanel extends JPanel {
 
+	//attributes 속성
 	private static final long serialVersionUID = 1L;
 
-	private enum EActionState {eReady, eTransforming}; // cmc를 n포인트 드로일으로 pdr을 two포인트 드로일으로 바꿔진행
-
-	private EActionState eActionState; // 그리는 방식이 같은 것끼리 도형을 분리 ***이 때 무브와 드로잉은 구분해야한다.
-	private MouseHandler mouseHandler;
-
+	//components 부품	
 	private Vector<GShape> shapeVector;
-	public Vector<GShape> getShapeVector() { return this.shapeVector;}
-	public void setShapeVector(Object shapeVector) {
-		this.shapeVector = (Vector<GShape>) shapeVector;
+	private MouseHandler mouseHandler;	
+	public Vector<GShape> getShapeVector() { 
+		this.updated = false;
+		return this.shapeVector;
+	}
+	public void restoreShapeVector(Object shapeVector) {
+		if(shapeVector == null) {
+			this.shapeVector.clear();
+		} else {
+		this.shapeVector = (Vector<GShape>) shapeVector;		
+		}
 		this.repaint();
 	}
 	
+	//working variable 
+	private enum EActionState {eReady, eTransforming}; // cmc를 n포인트 드로일으로 pdr을 two포인트 드로일으로 바꿔진행
+	private EActionState eActionState; // 그리는 방식이 같은 것끼리 도형을 분리 ***이 때 무브와 드로잉은 구분해야한다.
+	
+	private boolean updated;	
+	public boolean isUpdated() {return this.updated;}
+	public void setUpdated(boolean updated) {this.updated = updated;}
+	
 	private GShape currentShape;
 	private GTransformer transformer;
-	
 	private GShape currentTool;
-
 	public void setCurrentTool(EToolBar currentTool) {
 		this.currentTool = currentTool.getShape();
 	}
 	
 	public GDrawingPanel() {
 		this.eActionState = EActionState.eReady;
-
+		this.updated = false;
+		
 		this.setForeground(Color.black);
 		this.setBackground(Color.WHITE);
 
@@ -132,6 +144,7 @@ public class GDrawingPanel extends JPanel {
 		if(this.transformer instanceof GDrawer) {
 			this.shapeVector.add(this.currentShape);
 		}
+		this.updated = true;
 	}
 
 	private class MouseHandler implements MouseListener, MouseMotionListener { //state transition mapping

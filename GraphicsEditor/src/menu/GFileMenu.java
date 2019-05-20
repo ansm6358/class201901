@@ -12,8 +12,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import drawingPanel.GDrawingPanel;
 import global.Constants.EFileMenu;
@@ -22,6 +24,8 @@ import global.Constants.EToolBar;
 public class GFileMenu extends JMenu {
 
 	private static final long serialVersionUID = 1L;
+
+	private File directory, file;
 
 	// assciations
 	private GDrawingPanel drawingPanel;
@@ -33,6 +37,9 @@ public class GFileMenu extends JMenu {
 	public GFileMenu(String text) {
 		super(text);
 
+		this.file = null;
+		this.directory = new File("data");
+		
 		ActionHandler actionHandler = new ActionHandler();
 
 		for (EFileMenu eMenuItem : EFileMenu.values()) {
@@ -47,39 +54,63 @@ public class GFileMenu extends JMenu {
 	}
 
 	public void nnew() {
+		if (this.drawingPanel.isUpdated()) {
+			this.save();
+		}
+		
+		this.drawingPanel.restoreShapeVector(null);
+		this.drawingPanel.setUpdated(true);
+		
 	}
 
 	public void open() {
-		try {
-			File file = new File("data/output");
+		if (this.drawingPanel.isUpdated()) {
+			this.save();
+		}
+		JFileChooser chooser = new JFileChooser(this.directory);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Grapics Data", "god");
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(this.drawingPanel);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			this.directory = chooser.getCurrentDirectory();
+			this.file = chooser.getSelectedFile();
+		
+		try {	
 			ObjectInputStream objectInputStream;
 			objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
 			Object object = objectInputStream.readObject();
-			this.drawingPanel.setShapeVector(object);
+			this.drawingPanel.restoreShapeVector(object);
 			objectInputStream.close();
+			this.drawingPanel.setUpdated(false);
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
+		}
 	}
 
 	public void save() {
-		File file = new File("data/output");
-		ObjectOutputStream objectOutputStream;
-		try {
-			objectOutputStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-			objectOutputStream.writeObject(this.drawingPanel.getShapeVector());
-			objectOutputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (this.drawingPanel.isUpdated()) {
+			try {
+				ObjectOutputStream objectOutputStream;
+				objectOutputStream = new ObjectOutputStream(
+						new BufferedOutputStream(
+								new FileOutputStream(file)));
+				objectOutputStream.writeObject(this.drawingPanel.getShapeVector());
+				objectOutputStream.close();
+				this.drawingPanel.setUpdated(false);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-
 	}
 
 	public void saveAs() {
+		this.drawingPanel.setUpdated(false);
 	}
 
 	public void close() {
+		this.save();
+		System.exit(0);
 	}
 
 	private void invokeMethod(String name) {
