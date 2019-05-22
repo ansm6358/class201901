@@ -88,7 +88,7 @@ public class GFileMenu extends JMenu {
 		}
 	}
 
-	public void save() {
+	public void save() { 
 		if (this.drawingPanel.isUpdated()) {
 			try {
 				ObjectOutputStream objectOutputStream;

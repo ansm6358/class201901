@@ -29,7 +29,6 @@ public class GDrawingPanel extends JPanel {
 	private Vector<GShape> shapeVector;
 	private MouseHandler mouseHandler;	
 	public Vector<GShape> getShapeVector() { 
-		this.updated = false;
 		return this.shapeVector;
 	}
 	public void restoreShapeVector(Object shapeVector) {
