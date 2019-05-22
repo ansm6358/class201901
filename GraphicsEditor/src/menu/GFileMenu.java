@@ -39,7 +39,7 @@ public class GFileMenu extends JMenu {
 
 		this.file = null;
 		this.directory = new File("data");
-		
+
 		ActionHandler actionHandler = new ActionHandler();
 
 		for (EFileMenu eMenuItem : EFileMenu.values()) {
@@ -54,28 +54,16 @@ public class GFileMenu extends JMenu {
 	}
 
 	public void nnew() {
-		if (this.drawingPanel.isUpdated()) {
-			this.save();
-		}
+		this.save();
 		
 		this.drawingPanel.restoreShapeVector(null);
 		this.drawingPanel.setUpdated(true);
-		
+		this.file = null; // 수정사항1 (new를 했을 때도 파일이 고정 됨)
+
 	}
 
-	public void open() {
-		if (this.drawingPanel.isUpdated()) {
-			this.save();
-		}
-		JFileChooser chooser = new JFileChooser(this.directory);
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("Grapics Data", "god");
-		chooser.setFileFilter(filter);
-		int returnVal = chooser.showOpenDialog(this.drawingPanel);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {
-			this.directory = chooser.getCurrentDirectory();
-			this.file = chooser.getSelectedFile();
-		
-		try {	
+	public void readObject() {
+		try {
 			ObjectInputStream objectInputStream;
 			objectInputStream = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
 			Object object = objectInputStream.readObject();
@@ -85,29 +73,61 @@ public class GFileMenu extends JMenu {
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	public void open() {
+		//같은 파일을 오픈하면 현재 파일인지 아닌지 확인하는 거 집어 넣기
+			this.save();
+		JFileChooser chooser = new JFileChooser(this.directory);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Grapics Data", "god");
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(this.drawingPanel);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			this.directory = chooser.getCurrentDirectory();
+			this.file = chooser.getSelectedFile();
+			this.readObject();
+			
 		}
 	}
 
-	public void save() { 
+	private void writeObject() {
+		try {
+			ObjectOutputStream objectOutputStream;
+			objectOutputStream = new ObjectOutputStream(
+					new BufferedOutputStream(
+							new FileOutputStream(file)));
+			objectOutputStream.writeObject(this.drawingPanel.getShapeVector());
+			objectOutputStream.close();
+			this.drawingPanel.setUpdated(false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public void save() {
 		if (this.drawingPanel.isUpdated()) {
-			try {
-				ObjectOutputStream objectOutputStream;
-				objectOutputStream = new ObjectOutputStream(
-						new BufferedOutputStream(
-								new FileOutputStream(file)));
-				objectOutputStream.writeObject(this.drawingPanel.getShapeVector());
-				objectOutputStream.close();
-				this.drawingPanel.setUpdated(false);
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (file == null) {
+				this.saveAs();
+			} else {
+				this.writeObject();
 			}
 		}
 	}
 
 	public void saveAs() {
-		this.drawingPanel.setUpdated(false);
+		JFileChooser chooser = new JFileChooser(this.directory);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Grapics Data", "god");
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showSaveDialog(this.drawingPanel);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			this.directory = chooser.getCurrentDirectory();
+			this.file = chooser.getSelectedFile();
+			this.writeObject();
+		}	
 	}
 
+	public void print() {
+		
+	}
+	
 	public void close() {
 		this.save();
 		System.exit(0);
