@@ -75,7 +75,7 @@ public class GFileMenu extends JMenu {
 		}
 	}
 	public void open() {
-		//같은 파일을 오픈하면 현재 파일인지 아닌지 확인하는 거 집어 넣기
+		//수정사항2 같은 파일을 오픈하면 현재 파일인지 아닌지 확인하는 거 집어 넣기 : 여기서 물어보기 기존 파일이 있습니다 저장 하겠습니까? if file = null
 			this.save();
 		JFileChooser chooser = new JFileChooser(this.directory);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Grapics Data", "god");

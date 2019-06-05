@@ -44,6 +44,28 @@ public class GEditMenu extends JMenu {
 		}
 	}
 	
+	public void undo() {
+		
+	}
+	public void redo() {
+		
+	}
+	public void cut() {
+		this.drawingPanel.cut();
+	}
+	public void copy() {
+		this.drawingPanel.copy();
+	}
+	public void paste() {
+		this.drawingPanel.paste();
+	}
+	public void group() {
+		
+	}
+	public void ungroup() {
+		
+	}
+	
 	private class ActionHandler implements ActionListener {
 
 		@Override

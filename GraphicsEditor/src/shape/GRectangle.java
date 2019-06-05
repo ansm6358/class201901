@@ -34,4 +34,9 @@ public class GRectangle extends GShape {
 	public void finishMoving(Graphics2D graphics2d, int x, int y) {
 		
 	}
+
+	public GShape newInstance() {
+		return new GRectangle();
+	}
+
 }

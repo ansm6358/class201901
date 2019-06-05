@@ -10,6 +10,9 @@ public class GPolygon extends GShape {
 		this.shape = new java.awt.Polygon();
 		this.polygon = (java.awt.Polygon)this.shape;
 	}
+	public GShape newInstance() {
+		return new GPolygon();
+	}
 	public void setOrigin(int x, int y) {
 		this.polygon.addPoint(x, y);
 		this.polygon.addPoint(x, y);
@@ -34,4 +37,5 @@ public class GPolygon extends GShape {
 		
 		
 	}
+	
 }
